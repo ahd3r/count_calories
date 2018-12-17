@@ -13,15 +13,15 @@ const Storage=(function(){
 
 // Item controler
 const ItemCTRL=(function(){
-    // Data which we have
+  // Data which we have
   const data = {
     items: function(){
       if(getDataFromStorage()){
-        const timeData1=getDataFromStorage();
+        const timeData1=storage.getDataFromStorage();
         return timeData1;
       }else{
-        setAgainDataInStorage([]);
-        const timeData2=getDataFromStorage();
+        storage.setAgainDataInStorage([]);
+        const timeData2=storage.getDataFromStorage();
         return timeData2;
       }
     },//[{id:1,name:'Call',calories:200}]
@@ -94,7 +94,7 @@ const UICTRL=(function(){
 })();
 
 // App controler
-const App = (function(ItemCTRL, UICTRL){
+const App = (function(ItemCTRL, UICTRL, Storage){
   const loadEventListeners=function(){
     document.querySelector('.addMeal').addEventListener('submit',function(e){
       const food = document.querySelector('#food').value;
@@ -109,11 +109,9 @@ const App = (function(ItemCTRL, UICTRL){
           currentData.push({id:1,name:food,calories:parseInt(calories)});
         }else{
           const lastCurrentData=currentData[currentData.length - 1];
-          console.log(lastCurrentData);
-          console.log(currentData);
-          // currentData.push({id:lastCurrentData.id + 1,name:food,calories:parseInt(calories)});
+          currentData.push({id:lastCurrentData.id + 1,name:food,calories:parseInt(calories)});
         }
-        setAgainDataInStorage(currentData);
+        Storage.setAgainDataInStorage(currentData);
         if(document.querySelector('.secondrow')){
           document.querySelector('.secondrow').remove();
           document.querySelector('.thirdrow').remove();
@@ -136,7 +134,8 @@ const App = (function(ItemCTRL, UICTRL){
       }
     }
   };
-})(ItemCTRL, UICTRL);
+})(ItemCTRL, UICTRL, Storage);
 
 // Initialize App
 App.init();
+// App.event;
