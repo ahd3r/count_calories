@@ -41,13 +41,11 @@ const Data = (function(){
 		},
 		deleteOneFromData:function(id){
 			const currentData = StorageForData.getDataFromStorage();
-			let i;
-			currentData.forEach((item,index)=>{
+			currentData.forEach((item)=>{
 				if(item.id===id){
-					i = index;
+					currentData.splice(currentData.indexOf(item),1);
 				}
 			});
-			currentData.splice(i,1);
 			StorageForData.reWriteDataInStorage(currentData);
 		}
 	}
@@ -137,6 +135,7 @@ const UI = (function(){
 					</div>
 				</div>
 				`;
+				App.addEvent();
 				e.preventDefault();
 			});
 			document.querySelector('.upd-btn').addEventListener('click',function(e){
@@ -171,12 +170,13 @@ const UI = (function(){
 					`;
 					UI.renderCounterCalories(Data.getCalories());
 					UI.renderData(Data.getData());
+					App.addEvent();
 				}
 				e.preventDefault();
 			});
 			document.querySelector('.del-btn').addEventListener('click',function(e){
 				const data = Data.getData();
-				if(data.length<=1){
+				if(data.length===1){
 					StorageForData.reWriteDataInStorage([]);
 					document.querySelector('.editMeal').remove();
 					document.querySelector('.card-content').appendChild(document.createElement('form')).className='addMeal';
@@ -198,10 +198,11 @@ const UI = (function(){
 					</div>
 					`;
 					UI.renderNothing();
-				}else{
+					App.addEvent();
+				} else {
 					const id = c.target.parentElement.parentElement.classList[1];
 					const idintify=id.match(/\d+/);
-					Data.deleteOneFromData(idintify);
+					Data.deleteOneFromData(parseInt(idintify[0]));
 					document.querySelector('.editMeal').remove();
 					document.querySelector('.card-content').appendChild(document.createElement('form')).className='addMeal';
 					document.querySelector('.addMeal').innerHTML=`
@@ -223,6 +224,7 @@ const UI = (function(){
 					`;
 					UI.renderCounterCalories(Data.getCalories());
 					UI.renderData(Data.getData());
+					App.addEvent();
 				}
 				e.preventDefault();
 			});
@@ -251,7 +253,7 @@ const UI = (function(){
         document.querySelector(`.item-${item.id}`).addEventListener('mouseout',function(){
           document.querySelector(`.edit-for-${item.id}`).className=`edit-for-${item.id} small material-icons classForOpacity`;
 				});
-				document.querySelector(`.item-${item.id}`).addEventListener('click',UI.renderEdit);
+				document.querySelector(`.edit-for-${item.id}`).addEventListener('click',UI.renderEdit);
 			});
 		},
 		renderCounterCalories:function(calories){
@@ -302,7 +304,7 @@ const App = (function(){
 				UI.renderData(getedData);
 			}
 		},
-		addEvent:function(){
+		eventForClearBtn:function(){
 			document.querySelector('.clear-btn').addEventListener('click',function(){
 				const check = Data.getData();
 				if(check.length===0){
@@ -312,6 +314,8 @@ const App = (function(){
 					UI.afterClean();
 				}
 			});
+		},
+		addEvent:function(){
 			if(document.querySelector('.addMeal')){
 				document.querySelector('.addMeal').addEventListener('submit',function(e){
 					let inputCalories = document.querySelector('#calories').value;
@@ -343,3 +347,4 @@ const App = (function(){
 
 App.start();
 App.addEvent();
+App.eventForClearBtn();
